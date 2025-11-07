@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
+    <title>Simple Interest Calculator</title>
     <style>
         * {
             margin: 0;
@@ -30,7 +30,7 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
             position: relative;
             transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -52,7 +52,7 @@
             text-align: center;
             color: #333;
             margin: 0;
-            font-size: 2rem;
+            font-size: 1.8rem;
             flex: 1;
             transition: color 0.3s ease;
         }
@@ -135,13 +135,15 @@
             padding: 1rem;
             background: #f8f9fa;
             border-radius: 8px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #333;
-            min-height: 50px;
+            min-height: 80px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 0.5rem;
             transition: background 0.3s ease, color 0.3s ease;
         }
 
@@ -152,11 +154,22 @@
 
         .result-value {
             color: #667eea;
+            font-size: 1.3rem;
             transition: color 0.3s ease;
         }
 
         body.dark-mode .result-value {
             color: #818cf8;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .result-label {
+            color: #a0aec0;
         }
 
         .dark-mode-toggle {
@@ -183,58 +196,90 @@
         body.dark-mode .dark-mode-toggle:hover {
             background: #2d3748;
         }
+
+        .formula-info {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f0f0f0;
+            border-radius: 5px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .formula-info {
+            background: #1a202c;
+            color: #a0aec0;
+        }
     </style>
 </head>
 <body>
     <div class="calculator-container">
         <div class="header-container">
-            <h1>Calculator</h1>
+            <h1>Simple Interest Calculator</h1>
             <button class="dark-mode-toggle" onclick="toggleDarkMode()" id="darkModeBtn">🌙 Dark</button>
         </div>
         
         <div class="input-group">
-            <label for="number1">First Number:</label>
-            <input type="number" id="number1" placeholder="Enter first number" step="any">
+            <label for="principal">Principal Amount (₹):</label>
+            <input type="number" id="principal" placeholder="Enter principal amount" step="any" min="0">
         </div>
 
         <div class="input-group">
-            <label for="number2">Second Number:</label>
-            <input type="number" id="number2" placeholder="Enter second number" step="any">
+            <label for="rate">Rate of Interest (% per annum):</label>
+            <input type="number" id="rate" placeholder="Enter rate of interest" step="any" min="0">
         </div>
 
         <div class="input-group">
-            <label for="number3">Third Number:</label>
-            <input type="number" id="number3" placeholder="Enter third number" step="any">
+            <label for="time">Time (in years):</label>
+            <input type="number" id="time" placeholder="Enter time period" step="any" min="0">
         </div>
 
         <div class="button-group">
-            <button onclick="addNumbers()">Add</button>
+            <button onclick="calculateSimpleInterest()">Calculate</button>
         </div>
 
         <div class="result">
             <span id="result">Result will appear here</span>
         </div>
+
+        <div class="formula-info">
+            Formula: SI = (P × R × T) / 100
+        </div>
     </div>
 
     <script>
-        function addNumbers() {
+        function calculateSimpleInterest() {
             // Get the input values
-            const num1 = parseFloat(document.getElementById('number1').value);
-            const num2 = parseFloat(document.getElementById('number2').value);
-            const num3 = parseFloat(document.getElementById('number3').value);
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            const time = parseFloat(document.getElementById('time').value);
             const resultElement = document.getElementById('result');
 
             // Check if all inputs are valid numbers
-            if (isNaN(num1) || isNaN(num2) || isNaN(num3)) {
+            if (isNaN(principal) || isNaN(rate) || isNaN(time)) {
                 resultElement.innerHTML = '<span style="color: #e74c3c;">Please enter valid numbers in all fields</span>';
                 return;
             }
 
-            // Calculate the sum
-            const sum = num1 + num2 + num3;
+            // Check for negative values
+            if (principal < 0 || rate < 0 || time < 0) {
+                resultElement.innerHTML = '<span style="color: #e74c3c;">Values cannot be negative</span>';
+                return;
+            }
+
+            // Calculate Simple Interest
+            const simpleInterest = (principal * rate * time) / 100;
+            const totalAmount = principal + simpleInterest;
 
             // Display the result
-            resultElement.innerHTML = `Result: <span class="result-value">${sum}</span>`;
+            resultElement.innerHTML = `
+                <div class="result-label">Simple Interest:</div>
+                <div class="result-value">₹${simpleInterest.toFixed(2)}</div>
+                <div class="result-label" style="margin-top: 0.5rem;">Total Amount (Principal + Interest):</div>
+                <div class="result-value">₹${totalAmount.toFixed(2)}</div>
+            `;
         }
 
         // Dark Mode functionality
@@ -245,27 +290,27 @@
             
             if (isDarkMode) {
                 darkModeBtn.textContent = '☀️ Light';
-                localStorage.setItem('darkMode', 'enabled');
+                localStorage.setItem('darkModeSI', 'enabled');
             } else {
                 darkModeBtn.textContent = '🌙 Dark';
-                localStorage.setItem('darkMode', 'disabled');
+                localStorage.setItem('darkModeSI', 'disabled');
             }
         }
 
         // Load dark mode preference on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const darkMode = localStorage.getItem('darkMode');
+            const darkMode = localStorage.getItem('darkModeSI');
             if (darkMode === 'enabled') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('darkModeBtn').textContent = '☀️ Light';
             }
 
-            // Allow adding numbers by pressing Enter key
+            // Allow calculating by pressing Enter key
             const inputs = document.querySelectorAll('input[type="number"]');
             inputs.forEach(input => {
                 input.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
-                        addNumbers();
+                        calculateSimpleInterest();
                     }
                 });
             });
