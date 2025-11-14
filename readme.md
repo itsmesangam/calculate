@@ -1,4 +1,4 @@
-# Calculator Project
+#### Calculator Project
 
 A collection of web-based calculators built with HTML, CSS, and JavaScript. Features modern UI design with dark mode support.
 
